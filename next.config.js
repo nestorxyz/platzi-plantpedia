@@ -8,4 +8,12 @@ const config = {
   },
 }
 
-module.exports = withBundleAnalyzer(config)
+
+const nextConfig = {
+  images:{
+    domains: ['images.ctfassets.net']
+  },
+}
+
+
+module.exports = nextConfig
