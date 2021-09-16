@@ -1,4 +1,5 @@
 import Image from 'next/image'
+import Link from 'next/link'
 
 import { Layout } from '@components/Layout'
 import { RichText } from '@components/RichText'
@@ -6,10 +7,11 @@ import { AuthorCard } from '@components/AuthorCard'
 import { Typography } from '@ui/Typography'
 import { Grid } from '@ui/Grid'
 import { GetStaticProps, InferGetStaticPropsType } from 'next'
-import { getPlant, getPlantList } from '@api'
+import { getPlant, getPlantList, getCategoryList } from '@api'
 
-type PlantEntryProps ={
-  plant:Plant
+type PlantEntryPageProps = {
+  plant: Plant
+  categories: Category[]
 }
 
 type PathType = {
@@ -18,57 +20,63 @@ type PathType = {
   }
 }
 
-export const getStaticPaths = async ()=>{
-  const entries = await getPlantList({limit: 10})
+export const getStaticPaths = async () => {
+  const entries = await getPlantList({ limit: 10 })
 
-  const paths: PathType[] = entries.map(plant => {
+  const paths: PathType[] = entries.map((plant) => {
     return {
       params: {
-        slug: plant.slug
-      }
+        slug: plant.slug,
+      },
     }
   })
 
   return {
     paths,
     //404 en las entradas no encontradas
-    fallback: false
+    fallback: false,
   }
 }
 
-export const getStaticProps: GetStaticProps<PlantEntryProps> = async ({params})=>{
+export const getStaticProps: GetStaticProps<PlantEntryPageProps> = async ({
+  params,
+}) => {
   const slug = params?.slug
 
-  if(typeof slug != 'string'){
-    return{
-      notFound: true
+  if (typeof slug != 'string') {
+    return {
+      notFound: true,
     }
   }
 
-  try{
+  try {
     const plant = await getPlant(slug)
-    return{
-      props:{
-        plant
-      }
+    const categories = await getCategoryList()
+    return {
+      props: {
+        plant,
+        categories,
+      },
     }
-  } catch(e){
-    return{
-      notFound:true
+  } catch (e) {
+    return {
+      notFound: true,
     }
   }
 }
 
-const PlantEntryPage = ({plant}: InferGetStaticPropsType<typeof getStaticProps>) => {
-
+const PlantEntryPage = ({
+  plant,
+  categories,
+}: InferGetStaticPropsType<typeof getStaticProps>) => {
   return (
     <Layout>
       <Grid container spacing={4}>
         <Grid item xs={12} md={8} lg={9} component="article">
           <figure>
             <Image
-              width='932'
-              height='410'
+              width="932"
+              height="410"
               src={plant.image.url}
               alt={plant.image.title}
             />
@@ -80,21 +88,21 @@ const PlantEntryPage = ({plant}: InferGetStaticPropsType<typeof getStaticProps>)
             <RichText richText={plant.description} />
           </div>
         </Grid>
-        {/* <Grid item xs={12} md={4} lg={3} component="aside">
+        <Grid item xs={12} md={4} lg={3} component="aside">
           <section>
-            <Typography variant="h5" component="h3" className="mb-4">
+            {/* <Typography variant="h5" component="h3" className="mb-4">
               {t('recentPosts')}
-            </Typography>
-            {otherEntries.map((plantEntry) => (
+            </Typography> */}
+            {/* {otherEntries.map((plantEntry) => (
               <article className="mb-4" key={plantEntry.id}>
-                <PlantEntryInline {...plantEntry} />
+                <PlantCollection {...plantEntry} variant='square'/>
               </article>
-            ))}
+            ))} */}
           </section>
           <section className="mt-10">
-            <Typography variant="h5" component="h3" className="mb-4">
+            {/* <Typography variant="h5" component="h3" className="mb-4">
               {t('categories')}
-            </Typography>
+            </Typography> */}
             <ul className="list">
               {categories.map((category) => (
                 <li key={category.id}>
@@ -107,7 +115,7 @@ const PlantEntryPage = ({plant}: InferGetStaticPropsType<typeof getStaticProps>)
               ))}
             </ul>
           </section>
-        </Grid> */}
+        </Grid>
       </Grid>
       <section className="my-4 border-t-2 border-b-2 border-gray-200 pt-12 pb-7">
         <AuthorCard {...plant.author} />
