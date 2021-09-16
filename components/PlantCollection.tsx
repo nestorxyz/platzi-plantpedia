@@ -4,6 +4,7 @@ import { Typography } from '@ui/Typography'
 import { Button } from '@ui/Button'
 
 import { Excerpt } from '@components/Excerpt'
+import { Image } from '@components/Image'
 
 type PlantCollectionProps = {
   plants: Plant[]
@@ -54,7 +55,13 @@ export function PlantEntrySquare({ image, plantName, slug }: Plant) {
     <Link href={`/entry/${slug}`}>
       <a title={`Go to ${plantName}`}>
         <div className="opacity-95 hover:opacity-100">
-          <img src={image.url} width={460} />
+          <Image
+            src={image.url}
+            width={300}
+            layout="responsive"
+            aspectRatio={'4:3'}
+            fit="scale"
+          />
           <div className="p-4">
             <Typography variant="h4" className="break-words">
               {plantName}

@@ -6,14 +6,9 @@ const config = {
   future: {
     webpack5: true,
   },
-}
-
-
-const nextConfig = {
-  images:{
-    domains: ['images.ctfassets.net']
+  images: {
+    domains: ['images.ctfassets.net'],
   },
 }
 
-
-module.exports = nextConfig
+module.exports = withBundleAnalyzer(config)
